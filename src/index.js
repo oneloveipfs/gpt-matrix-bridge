@@ -140,12 +140,13 @@ async function sendDiscordWebhook(sender, avatarUrl, threadId, message, replyTo 
         message = replied.join('\n\n')
     }
     // mention gpt bot by default from webhook
-    if (config.discord_webhook_id && config.discord_webhook_token &&
-        (!noMention ||
-            (!message.startsWith('~') && !message.startsWith('!') && config.discord_gpt_bot_id)
-        ))
+    const useWebhook = config.discord_webhook_id && config.discord_webhook_token
+    let noPing = false
+    if (noMention || message.startsWith('~') || message.startsWith('!') || !config.discord_gpt_bot_id || (useWebhook && typeof replyTo === 'object'))
+        noPing = true
+    if (!noPing)
         message = '<@'+config.discord_gpt_bot_id+'> '+message
-    if (config.discord_webhook_id && config.discord_webhook_token) {
+    if (useWebhook) {
         const webhookMsg = await discordWebhook.send({
             username: username,
             avatarURL: avatarUrl,
@@ -175,7 +176,6 @@ async function sendDiscordWebhook(sender, avatarUrl, threadId, message, replyTo 
                 discordThread: threadId
             })
         } else {
-            console.log(replyThread.send)
             const sent = await replyThread.send({ content: message })
             logger.debug('Matrix: '+eventId, 'Discord: '+sent.id)
             db.collection('messages').insertOne({
