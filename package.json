@@ -1,0 +1,22 @@
+{
+  "name": "gpt-matrix-bridge",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "setup-mapping": "cp mapping.template.json mapping.json;",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.7.1",
+    "dotenv": "^16.0.3",
+    "log4js": "^6.7.1",
+    "matrix-bot-sdk": "^0.6.3",
+    "mongodb": "^5.0.1",
+    "yargs": "^17.7.0"
+  }
+}
