@@ -12,6 +12,13 @@ let config = {
     mongo_url: 'mongodb://localhost:27017',
     mongo_dbname: 'bridger',
 
+    // credits system
+    credits_initial: 10,
+    credits_refill_price_usd: 0.25,
+    credits_cost_per_msg: 1,
+    credits_hive_receiver: '',
+    credits_hive_api: 'https://techcoderx.com',
+
     // matrix
     matrix_homeserver: '',
     matrix_access_token: '',

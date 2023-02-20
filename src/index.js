@@ -2,6 +2,7 @@ import logger from './logger.js'
 import config from './config.js'
 import mapping from './mapping.js'
 import db from './db.js'
+import streamer from './streamer.js'
 import { MatrixClient, SimpleFsStorageProvider, AutojoinRoomsMixin } from 'matrix-bot-sdk'
 import { Client, GatewayIntentBits, WebhookClient, EmbedBuilder, MessageType } from 'discord.js'
 
@@ -33,6 +34,8 @@ async function handleMatrixMsg(roomId, event) {
             replyTo = 1
     }
     if (mapping.matrixToDiscord[roomId]) {
+        if (event.content.body.startsWith('!'))
+            return matrixHandleCommand(roomId,event)
         const profile = await matrixClient.getUserProfile(event.sender)
         if (event.content.msgtype === 'm.text')
             sendDiscordWebhook(event.sender,httpAvatarUrl(profile.avatar_url),mapping.matrixToDiscord[roomId],event.content.body,replyTo,event.event_id)
@@ -53,6 +56,20 @@ function httpImageUrl(imageUrl = '') {
     const server_id = parts[parts.length-2]
     const image_id = parts[parts.length-1]
     return config.matrix_homeserver+'/_matrix/media/r0/download/'+server_id+'/'+image_id
+}
+
+function capitalizeFirstLetter(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+async function matrixHandleCommand(roomId, event) {
+    if (event.content.body.startsWith('!headblock')) {
+        let result = ''
+        for (let i in streamer)
+            if (i !== '_id')
+                result += capitalizeFirstLetter(i)+': '+streamer[i]
+        await matrixClient.replyNotice(roomId,event,result)
+    }
 }
 
 /** Discord Bot */
