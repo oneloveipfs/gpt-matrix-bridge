@@ -104,7 +104,7 @@ async function sendMatrixMsg(discordMsg, replyTo) {
     logger.debug('Discord: '+discordMsg.id, 'Matrix: '+sentMsg)
     db.collection('messages').insertOne({
         matrix: sentMsg,
-        matrixRoom: mapping.discordToMatrix[threadId],
+        matrixRoom: mapping.discordToMatrix[discordMsg.channel.id],
         discord: discordMsg.id,
         discordThread: discordMsg.channel.id
     })
