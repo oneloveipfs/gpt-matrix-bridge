@@ -104,6 +104,7 @@ async function sendMatrixMsg(discordMsg, replyTo) {
     logger.debug('Discord: '+discordMsg.id, 'Matrix: '+sentMsg)
     db.collection('messages').insertOne({
         matrix: sentMsg,
+        matrixRoom: mapping.discordToMatrix[threadId],
         discord: discordMsg.id,
         discordThread: discordMsg.channel.id
     })
@@ -165,6 +166,7 @@ async function sendDiscordWebhook(sender, avatarUrl, threadId, message, replyTo 
             logger.debug('Matrix: '+eventId, 'Discord: '+webhookMsg.id)
             db.collection('messages').insertOne({
                 matrix: eventId,
+                matrixRoom: mapping.discordToMatrix[threadId],
                 discord: webhookMsg.id,
                 discordThread: threadId
             })
@@ -179,6 +181,7 @@ async function sendDiscordWebhook(sender, avatarUrl, threadId, message, replyTo 
             logger.debug('Matrix: '+eventId, 'Discord: '+replied.id)
             db.collection('messages').insertOne({
                 matrix: eventId,
+                matrixRoom: mapping.discordToMatrix[threadId],
                 discord: replied.id,
                 discordThread: threadId
             })
@@ -187,6 +190,7 @@ async function sendDiscordWebhook(sender, avatarUrl, threadId, message, replyTo 
             logger.debug('Matrix: '+eventId, 'Discord: '+sent.id)
             db.collection('messages').insertOne({
                 matrix: eventId,
+                matrixRoom: mapping.discordToMatrix[threadId],
                 discord: sent.id,
                 discordThread: threadId
             })
