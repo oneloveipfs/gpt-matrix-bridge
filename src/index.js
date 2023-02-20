@@ -78,7 +78,10 @@ discordClient.on('messageCreate', async (discordMsg) => {
         }
         if (await db.collection('messages').findOne({ discord: discordMsg.id, discordThread: discordMsg.channelId }))
             return logger.debug('skipping',discordMsg.id)
-        sendMatrixMsg(discordMsg, replyTo)
+        if (discordMsg.type === MessageType.Default || discordMsg.type === MessageType.Reply)
+            sendMatrixMsg(discordMsg, replyTo)
+        else if (discordMsg.type === MessageType.ChannelNameChange)
+            updateRoomDescription(mapping.discordToMatrix[discordMsg.channel.id],discordMsg.content)
         discordMsg.attachments.forEach((attachment) => {
             logger.debug(attachment)
         })
@@ -114,6 +117,10 @@ async function sendMatrixMsg(discordMsg, replyTo) {
             body: fname
         })
     })
+}
+
+async function updateRoomDescription(roomId, newDescription) {
+    await matrixClient.sendStateEvent(roomId,'m.room.topic','',{ topic: newDescription })
 }
 
 async function sendDiscordWebhook(sender, avatarUrl, threadId, message, replyTo = null, eventId = null, noMention = false) {
