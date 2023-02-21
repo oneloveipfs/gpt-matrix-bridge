@@ -7,7 +7,7 @@ import axios from 'axios'
 const shawp = {
     getCredits: async (username) => {
         let user = await db.collection('users').findOne({ _id: username })
-        if (!user || !user.balance)
+        if (!user || typeof user.balance !== 'number')
             return config.credits_initial
         else
             return user.balance
