@@ -66,7 +66,7 @@ function capitalizeFirstLetter(str) {
 async function matrixHandleCommand(roomId, event) {
     let command = event.content.body.trim()
     if (command.startsWith('!ping')) {
-        await matrixClient.replyNotice(roomId,event,'🏓 Pong!')
+        await matrixClient.replyHtmlNotice(roomId,event,'🏓 Pong!')
     } else if (command.startsWith('!headblock')) {
         let result = ''
         for (let i in streamer) {
