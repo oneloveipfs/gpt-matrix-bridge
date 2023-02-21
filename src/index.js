@@ -215,13 +215,13 @@ async function sendDiscordWebhook(sender, avatarUrl, threadId, message, event, r
     if (!message.startsWith('~')) {
         let balanceBefore = await shawp.getCredits(sender)
         if (balanceBefore-config.credits_cost_per_msg < 0)
-            return await matrixClient.replyNotice(`You currently do not have enough credits to send messages to Dave. Current balance: ${balanceBefore}`)
+            return await matrixClient.replyNotice(mapping.discordToMatrix[threadId],event,`You currently do not have enough credits to send messages to Dave. Current balance: ${balanceBefore}`)
         let balanceAfter = await shawp.consumeCredits(sender)
         let msgRemaining = balanceAfter/config.credits_cost_per_msg
         if (msgRemaining <= 0)
-            await matrixClient.replyNotice(`You are running out of credits. Refill credits to continue sending messages to Dave. New balance: ${balanceAfter}`)
+            await matrixClient.replyNotice(mapping.discordToMatrix[threadId],event,`You are running out of credits. Refill credits to continue sending messages to Dave. New balance: ${balanceAfter}`)
         else if (msgRemaining <= 2)
-            await matrixClient.replyNotice(`You are running low on credits. New balance: ${balanceAfter}`)
+            await matrixClient.replyNotice(mapping.discordToMatrix[threadId],event,`You are running low on credits. New balance: ${balanceAfter}`)
     }
     if (useWebhook) {
         const webhookMsg = await discordWebhook.send({
