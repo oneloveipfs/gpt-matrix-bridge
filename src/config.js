@@ -13,7 +13,7 @@ let config = {
     mongo_dbname: 'bridger',
 
     // credits system
-    credits_initial: 10,
+    credits_initial: 3,
     credits_refill_price_usd: 0.25,
     credits_cost_per_msg: 1,
     credits_memo_prefix: 'gpt-matrix-refill:',

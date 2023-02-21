@@ -85,7 +85,9 @@ async function matrixHandleCommand(roomId, event) {
                 result += '\n'
             if (i !== '_id' && streamer[i] > 0) {
                 if (result.length === 0)
-                    result += `<h4>Refill payment info for ${event.sender}</h4><p>`
+                    result += `
+                        <h4>Refill payment info for ${event.sender}</h4>
+                        <p>Each credit costs $${config.credits_refill_price_usd} USD. Sending each message to Dave costs ${config.credits_cost_per_msg} credits.</p><p>`
                 switch (i) {
                     case 'hive':
                         result += `<b>HIVE/HBD</b> - ${config.credits_hive_receiver} (Memo: <code>${config.credits_memo_prefix}${event.sender}</code>)`
