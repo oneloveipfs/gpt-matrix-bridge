@@ -63,12 +63,20 @@ function capitalizeFirstLetter(str) {
 }
 
 async function matrixHandleCommand(roomId, event) {
-    if (event.content.body.startsWith('!headblock')) {
+    let command = event.content.body.trim()
+    if (command.startsWith('!headblock')) {
         let result = ''
         for (let i in streamer)
             if (i !== '_id')
                 result += capitalizeFirstLetter(i)+': '+streamer[i]
         await matrixClient.replyNotice(roomId,event,result)
+    } else if (command.startsWith('!help')) {
+        await matrixClient.replyHtmlNotice(roomId,event,
+            `
+            <h4>GPT Bridge Help</h4>
+            <p><b>!headblock</b> - Returns currently processed block by the payment system</p>
+            `
+        )
     }
 }
 
