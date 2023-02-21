@@ -53,8 +53,8 @@ const shawp = {
         logger.debug(`Refilled $${usd} (${refillCreditAmt} credits) to ${parsedDetails} successfully`)
     },
     validatePayment: (memo) => {
-        if (!memo.startsWith('gpt-matrix-refill:@')) return ''
-        return memo.replace('gpt-matrix-refill:','')
+        if (!memo.startsWith(config.credits_memo_prefix+'@')) return ''
+        return memo.replace(config.credits_memo_prefix,'')
     },
     naiToString: (nai) => {
         let result = (parseInt(nai.amount) / Math.pow(10,nai.precision)).toString() + ' '

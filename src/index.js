@@ -66,15 +66,44 @@ async function matrixHandleCommand(roomId, event) {
     let command = event.content.body.trim()
     if (command.startsWith('!headblock')) {
         let result = ''
-        for (let i in streamer)
-            if (i !== '_id')
+        for (let i in streamer) {
+            if (result.length > 0)
+                result += '\n'
+            if (i !== '_id' && streamer[i] > 0)
                 result += capitalizeFirstLetter(i)+': '+streamer[i]
+        }
+        if (result.length === 0)
+            result = 'There are currently no enabled networks.'
         await matrixClient.replyNotice(roomId,event,result)
+    } else if (command.startsWith('!refill')) {
+        let result = ''
+        for (let i in streamer) {
+            if (result.length > 0)
+                result += '\n'
+            if (i !== '_id' && streamer[i] > 0) {
+                if (result.length === 0)
+                    result += `<h4>Refill payment info for ${event.sender}</h4><p>`
+                switch (i) {
+                    case 'hive':
+                        result += `<b>HIVE/HBD</b> - ${config.credits_hive_receiver} (Memo: ${config.credits_memo_prefix}${event.sender}`
+                        break
+                    default:
+                        break
+                }
+            }
+        }
+        if (result.length > 0)
+            result += '</p>'
+        else
+            result = 'There are currently no payment methods enabled.'
+        await matrixClient.replyHtmlNotice(roomId,event,result)
     } else if (command.startsWith('!help')) {
         await matrixClient.replyHtmlNotice(roomId,event,
             `
             <h4>GPT Bridge Help</h4>
             <p><b>!headblock</b> - Returns currently processed block by the payment system</p>
+            <p><b>!help</b> - Displays this help message</p>
+            <p><b>!refill</b> - Retrieve credit refill payment info</p>
             `
         )
     }

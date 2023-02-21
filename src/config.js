@@ -16,6 +16,7 @@ let config = {
     credits_initial: 10,
     credits_refill_price_usd: 0.25,
     credits_cost_per_msg: 1,
+    credits_memo_prefix: 'gpt-matrix-refill:',
     credits_hive_receiver: '',
     credits_hive_api: 'https://techcoderx.com',
 
