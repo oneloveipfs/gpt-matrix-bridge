@@ -39,9 +39,9 @@ async function handleMatrixMsg(roomId, event) {
             return matrixHandleCommand(roomId,event)
         const profile = await matrixClient.getUserProfile(event.sender)
         if (event.content.msgtype === 'm.text')
-            sendDiscordWebhook(event.sender,httpAvatarUrl(profile.avatar_url),mapping.matrixToDiscord[roomId],event.content.body,replyTo,event.event_id)
+            sendDiscordWebhook(event.sender,httpAvatarUrl(profile.avatar_url),mapping.matrixToDiscord[roomId],event.content.body,event,replyTo)
         else if (event.content.msgtype === 'm.image')
-            sendDiscordWebhook(event.sender,httpAvatarUrl(profile.avatar_url),mapping.matrixToDiscord[roomId],httpImageUrl(event.content.url),replyTo,event.event_id,true)
+            sendDiscordWebhook(event.sender,httpAvatarUrl(profile.avatar_url),mapping.matrixToDiscord[roomId],httpImageUrl(event.content.url),event,replyTo,true)
     }
 }
 
@@ -182,13 +182,15 @@ async function updateRoomDescription(roomId, newDescription) {
     await matrixClient.sendStateEvent(roomId,'m.room.topic','',{ topic: newDescription })
 }
 
-async function sendDiscordWebhook(sender, avatarUrl, threadId, message, replyTo = null, eventId = null, noMention = false) {
+async function sendDiscordWebhook(sender, avatarUrl, threadId, message, event, replyTo = null, noMention = false) {
+    const eventId = event.event_id
     if (await db.collection('messages').findOne({ matrix: eventId }))
         return logger.debug('skipping',eventId)
     const embeds = []
     const username = sender.slice(1).split(':')[0]
     const replyThread = await discordClient.channels.fetch(threadId)
-    if (typeof replyTo === 'object' && config.discord_webhook_id && config.discord_webhook_token) {
+    const useWebhook = config.discord_webhook_id && config.discord_webhook_token
+    if (typeof replyTo === 'object' && useWebhook) {
         const replyMsg = await replyThread.messages.fetch(replyTo.discord)
         const avatarURL = replyMsg.author.avatarURL()
         let replyContent = replyMsg.content
@@ -205,13 +207,22 @@ async function sendDiscordWebhook(sender, avatarUrl, threadId, message, replyTo 
         replied.shift()
         message = replied.join('\n\n')
     }
-    // mention gpt bot by default from webhook
-    const useWebhook = config.discord_webhook_id && config.discord_webhook_token
     // let noPing = false
     // if (noMention || message.startsWith('~') || message.startsWith('!') || !config.discord_gpt_bot_id || (useWebhook && typeof replyTo === 'object'))
     //     noPing = true
     // if (!noPing)
     //     message = '<@'+config.discord_gpt_bot_id+'> '+message
+    if (!message.startsWith('~')) {
+        let balanceBefore = await shawp.getCredits(sender)
+        if (balanceBefore-config.credits_cost_per_msg < 0)
+            return await matrixClient.replyNotice(`You currently do not have enough credits to send messages to Dave. Current balance: ${balanceBefore}`)
+        let balanceAfter = await shawp.consumeCredits(sender)
+        let msgRemaining = balanceAfter/config.credits_cost_per_msg
+        if (msgRemaining <= 0)
+            await matrixClient.replyNotice(`You are running out of credits. Refill credits to continue sending messages to Dave. New balance: ${balanceAfter}`)
+        else if (msgRemaining <= 2)
+            await matrixClient.replyNotice(`You are running low on credits. New balance: ${balanceAfter}`)
+    }
     if (useWebhook) {
         const webhookMsg = await discordWebhook.send({
             username: username,
