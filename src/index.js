@@ -3,6 +3,7 @@ import config from './config.js'
 import mapping from './mapping.js'
 import db from './db.js'
 import streamer from './streamer.js'
+import shawp from './shawp.js'
 import { MatrixClient, SimpleFsStorageProvider, AutojoinRoomsMixin } from 'matrix-bot-sdk'
 import { Client, GatewayIntentBits, WebhookClient, EmbedBuilder, MessageType } from 'discord.js'
 
@@ -85,7 +86,7 @@ async function matrixHandleCommand(roomId, event) {
                     result += `<h4>Refill payment info for ${event.sender}</h4><p>`
                 switch (i) {
                     case 'hive':
-                        result += `<b>HIVE/HBD</b> - ${config.credits_hive_receiver} (Memo: ${config.credits_memo_prefix}${event.sender}`
+                        result += `<b>HIVE/HBD</b> - ${config.credits_hive_receiver} (Memo: <code>${config.credits_memo_prefix}${event.sender}</code>)`
                         break
                     default:
                         break
@@ -97,6 +98,8 @@ async function matrixHandleCommand(roomId, event) {
         else
             result = 'There are currently no payment methods enabled.'
         await matrixClient.replyHtmlNotice(roomId,event,result)
+    } else if (command.startsWith('!balance')) {
+        await matrixClient.replyNotice(roomId,event,`Your current balance is ${await shawp.getCredits(event.sender)} credits. Sending each message to Dave costs ${config.credits_cost_per_msg} credits.`)
     } else if (command.startsWith('!help')) {
         await matrixClient.replyHtmlNotice(roomId,event,
             `
