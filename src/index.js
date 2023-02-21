@@ -65,7 +65,9 @@ function capitalizeFirstLetter(str) {
 
 async function matrixHandleCommand(roomId, event) {
     let command = event.content.body.trim()
-    if (command.startsWith('!headblock')) {
+    if (command.startsWith('!ping')) {
+        await matrixClient.replyNotice(roomId,event,'🏓 Pong!')
+    } else if (command.startsWith('!headblock')) {
         let result = ''
         for (let i in streamer) {
             if (result.length > 0)
@@ -104,8 +106,10 @@ async function matrixHandleCommand(roomId, event) {
         await matrixClient.replyHtmlNotice(roomId,event,
             `
             <h4>GPT Bridge Help</h4><p>
+            <b>!balance</b> - Returns the credit balance for user<br>
             <b>!headblock</b> - Returns currently processed block by the payment system<br>
             <b>!help</b> - Displays this help message<br>
+            <b>!ping</b> - Asks Dave to make the Pong sound<br>
             <b>!refill</b> - Retrieve credit refill payment info<br>
             </p>
             `
