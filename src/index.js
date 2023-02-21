@@ -34,9 +34,9 @@ async function handleMatrixMsg(roomId, event) {
         else
             replyTo = 1
     }
+    if (event.content.body.startsWith('!') && (roomId === config.matrix_bot_room || mapping.matrixToDiscord[roomId]))
+        return matrixHandleCommand(roomId,event)
     if (mapping.matrixToDiscord[roomId]) {
-        if (event.content.body.startsWith('!'))
-            return matrixHandleCommand(roomId,event)
         const profile = await matrixClient.getUserProfile(event.sender)
         if (event.content.msgtype === 'm.text')
             sendDiscordWebhook(event.sender,httpAvatarUrl(profile.avatar_url),mapping.matrixToDiscord[roomId],event.content.body,event,replyTo)

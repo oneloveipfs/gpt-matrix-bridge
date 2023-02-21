@@ -24,6 +24,7 @@ let config = {
     matrix_homeserver: '',
     matrix_access_token: '',
     matrix_autojoin: false,
+    matrix_bot_room: '',
 
     // discord
     discord_guild_id: '',
