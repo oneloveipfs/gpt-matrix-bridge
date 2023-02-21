@@ -100,10 +100,11 @@ async function matrixHandleCommand(roomId, event) {
     } else if (command.startsWith('!help')) {
         await matrixClient.replyHtmlNotice(roomId,event,
             `
-            <h4>GPT Bridge Help</h4>
-            <p><b>!headblock</b> - Returns currently processed block by the payment system</p>
-            <p><b>!help</b> - Displays this help message</p>
-            <p><b>!refill</b> - Retrieve credit refill payment info</p>
+            <h4>GPT Bridge Help</h4><p>
+            <b>!headblock</b> - Returns currently processed block by the payment system<br>
+            <b>!help</b> - Displays this help message<br>
+            <b>!refill</b> - Retrieve credit refill payment info<br>
+            </p>
             `
         )
     }
