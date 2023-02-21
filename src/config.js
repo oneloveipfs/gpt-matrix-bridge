@@ -6,7 +6,7 @@ const { argv } = yargs(process.argv)
 
 let config = {
     // logging
-    log_level: 'info',
+    log_level: 'debug',
 
     // mongodb
     mongo_url: 'mongodb://localhost:27017',
@@ -37,6 +37,9 @@ let config = {
 
 // Config overwrites through CLI args or environment vars
 for (let c in config)
-    config[c] = argv[c] || process.env['GPTMXBRIDGE_' + c.toUpperCase()] || config[c]
+    if (typeof config[c] === 'number')
+        config[c] = parseFloat(argv[c]) || parseFloat(process.env['GPTMXBRIDGE_' + c.toUpperCase()]) || config[c]
+    else
+        config[c] = argv[c] || process.env['GPTMXBRIDGE_' + c.toUpperCase()] || config[c]
 
 export default config
