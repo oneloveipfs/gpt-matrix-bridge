@@ -19,6 +19,8 @@ let config = {
     credits_memo_prefix: 'gpt-matrix-refill:',
     credits_hive_receiver: '',
     credits_hive_api: 'https://techcoderx.com',
+    credits_hive_dgpo_ms: 120000,
+    credits_hive_blocks_ms: 600000,
 
     // matrix
     matrix_homeserver: '',

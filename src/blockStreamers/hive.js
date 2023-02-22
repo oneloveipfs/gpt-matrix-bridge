@@ -1,5 +1,6 @@
 import axios from 'axios'
 import logger from '../logger.js'
+import config from '../config.js'
 
 export default class {
     constructor(api,irreversible,network = '',startBlock = 0) {
@@ -16,7 +17,7 @@ export default class {
     streamBlocks (cb,completion) {
         // Stream chain props
         this.fetchProps()
-        this.propsInterval = setInterval(() => this.fetchProps(),60000)
+        this.propsInterval = setInterval(() => this.fetchProps(),config.credits_hive_dgpo_ms)
     
         // Stream blocks
         this.fetchBlocks(cb,completion)
@@ -53,13 +54,14 @@ export default class {
         }
         
         if (this.network === 'hive') {
+            let blocksLeft = this.headBlock-this.parsedBlock
             axios.post(this.api,{
                 id: 1,
                 jsonrpc: '2.0',
                 method: 'block_api.get_block_range',
                 params: {
                     starting_block_num: this.parsedBlock+1,
-                    count: Math.min(this.headBlock-this.parsedBlock,100)
+                    count: Math.min(blocksLeft,100)
                 }
             }).then((newBlocks) => {
                 if (newBlocks.data.result && newBlocks.data.result.blocks && newBlocks.data.result.blocks.length > 0) {
@@ -75,7 +77,7 @@ export default class {
                     }
                     if (typeof completion === 'function')
                         completion()
-                    setTimeout(() => this.fetchBlocks(cb,completion),300000)
+                    setTimeout(() => this.fetchBlocks(cb,completion),blocksLeft <= 100 ? config.credits_hive_blocks_ms : 3000)
                 }
             }).catch((e) => {
                 // console.error(this.network,'get_block_range error',e.toString())
