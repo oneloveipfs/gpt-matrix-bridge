@@ -16,7 +16,7 @@ export default class {
     streamBlocks (cb,completion) {
         // Stream chain props
         this.fetchProps()
-        this.propsInterval = setInterval(() => this.fetchProps(),15000)
+        this.propsInterval = setInterval(() => this.fetchProps(),60000)
     
         // Stream blocks
         this.fetchBlocks(cb,completion)
@@ -75,7 +75,7 @@ export default class {
                     }
                     if (typeof completion === 'function')
                         completion()
-                    setTimeout(() => this.fetchBlocks(cb,completion),9000)
+                    setTimeout(() => this.fetchBlocks(cb,completion),300000)
                 }
             }).catch((e) => {
                 // console.error(this.network,'get_block_range error',e.toString())
