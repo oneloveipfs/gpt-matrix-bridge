@@ -1,4 +1,5 @@
 import axios from 'axios'
+import logger from '../logger.js'
 
 export default class {
     constructor(api,irreversible,network = '',startBlock = 0) {
@@ -29,6 +30,7 @@ export default class {
             params: []
         }).then((props) => {
             if (props.data.result) {
+                logger.trace('Fetch '+this.network+' dynamic global props',props.data.result.last_irreversible_block_num)
                 let num = this.irreversible ? props.data.result.last_irreversible_block_num : props.data.result.head_block_number
                 if (num > this.headBlock && this.headBlock === 0) {
                     this.parsedBlock = num
@@ -61,6 +63,7 @@ export default class {
                 }
             }).then((newBlocks) => {
                 if (newBlocks.data.result && newBlocks.data.result.blocks && newBlocks.data.result.blocks.length > 0) {
+                    logger.trace('Fetch block range',this.parsedBlock+1)
                     let gotBlock = this.parsedBlock+1
                     this.parsedBlock += newBlocks.data.result.blocks.length
                     // console.log('parsed',newBlocks.data.result.blocks.length,'headBlock',this.headBlock,'parsedBlock',this.parsedBlock)
