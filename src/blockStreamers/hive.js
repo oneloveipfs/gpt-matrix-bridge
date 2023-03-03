@@ -78,7 +78,8 @@ export default class {
                     if (typeof completion === 'function')
                         completion()
                     setTimeout(() => this.fetchBlocks(cb,completion),blocksLeft <= 100 ? config.credits_hive_blocks_ms : 3000)
-                }
+                } else
+                    setTimeout(() => this.fetchBlocks(cb,completion),3000)
             }).catch((e) => {
                 // console.error(this.network,'get_block_range error',e.toString())
                 setTimeout(() => this.fetchBlocks(cb,completion),3000)
