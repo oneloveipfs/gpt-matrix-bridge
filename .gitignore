@@ -3,3 +3,4 @@ logs
 .env
 bot.json
 mapping.json
+.DS_Store
