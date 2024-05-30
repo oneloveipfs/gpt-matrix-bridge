@@ -2,6 +2,8 @@
 [![OneLoveIPFS Discord](https://img.shields.io/discord/956143542391169055.svg?logo=discord)](https://discord.gg/ZWj5NqaBeF)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
+**Status: Deprecated.**
+
 # gpt-matrix-bridge
 Make a GPT Discord bot accessible on Matrix.
 
